@@ -1,0 +1,75 @@
+{if isset($smarty.get.errmes) && !empty($smarty.get.errmes)}
+     <div class="alert alert-danger">
+         {$smarty.get.errmes}
+     </div>
+{/if}
+
+<div class="row">
+    <div class="col-md-12 general-block-decorator">
+
+        <div class="row">
+            <div class="col-md-12 title title-without-tabs">
+                {intl d='wiretransfer.ai' l="Bank account configuration"}
+            </div>
+        </div>
+
+        <div class="form-container">
+            <div class="row">
+                <div class="col-md-12">
+
+                    {form name="transfer.configure.bic"}
+
+                        <form action="{url path="/admin/wiretransfer/configure"}" method="post">
+
+                            {form_hidden_fields form=$form}
+
+                            {if $form_error}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="alert alert-danger">{$form_error_message}</div>
+                                    </div>
+                                </div>
+                            {/if}
+
+
+                            {form_field form=$form field="name"}
+                            <div class="form-group {if $error}has-error{/if}">
+                                <label for="{$label_attr.for}">
+                                    {$label}
+                                </label>
+
+                                <input type="text" class="form-control" required name="{$name}" id="{$label_attr.for}" value="{$value}"/>
+                            </div>
+                            {/form_field}
+
+                            {form_field form=$form field="iban"}
+                            <div class="form-group {if $error}has-error{/if}">
+                                <label for="{$label_attr.for}">
+                                    {$label}
+                                </label>
+
+                                <input type="text" class="form-control" required name="{$name}" id="{$label_attr.for}" value="{$value}"/>
+                            </div>
+                            {/form_field}
+
+                            {form_field form=$form field="bic"}
+                            <div class="form-group {if $error}has-error{/if}">
+                                <label for="{$label_attr.for}">
+                                    {$label}
+                                </label>
+
+                                <input type="text" class="form-control" required name="{$name}" id="{$label_attr.for}" value="{$value}"/>
+                            </div>
+                            {/form_field}
+
+                            <div class="form-group pull-right">
+                                <button type="submit" name="save_mode" value="stay" class="form-submit-button btn btn-sm btn-default btn-success" title="{intl d='wiretransfer.ai' l='Save changes'}">{intl d='wiretransfer.ai' l='Save changes'} <span class="glyphicon glyphicon-ok"></span></button>
+                                <a href="{url path='/admin/modules'}" class="btn btn-sm btn-default">{intl d='wiretransfer.ai' l='Close'} <span class="glyphicon glyphicon-remove"></span></a>
+                            </div>
+                        </form>
+                    {/form}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

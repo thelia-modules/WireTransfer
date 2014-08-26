@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<config xmlns="http://thelia.net/schema/dic/config"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
+
+    <loops>
+        <loop class="WireTransfer\Loop\GetBankInformation" name="transfer.get.info" />
+    </loops>
+
+    <forms>
+        <form name="transfer.configure.bic" class="WireTransfer\Form\ConfigurationForm" />
+    </forms>
+
+    <services>
+        <service id="send.wiretransfer.mail" class="WireTransfer\Listener\SendPaymentConfirmationEmail" scope="request">
+            <argument type="service" id="thelia.parser" />
+            <argument type="service" id="mailer"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+    </services>
+
+</config>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database defaultIdMethod="native" name="thelia" namespace="WireTransfer\Model">
+    <table name="wire_transfer_config">
+        <column name="name" required="true" size="255" type="VARCHAR" primaryKey="true"/>
+        <column name="value" size="255" type="VARCHAR" />
+    </table>
+    <external-schema filename="local/config/schema.xml" referenceOnly="true" />
+</database>

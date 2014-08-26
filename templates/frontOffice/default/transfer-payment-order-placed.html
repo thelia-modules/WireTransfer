@@ -1,0 +1,24 @@
+{extends file="order-placed.html"}
+
+{block name='additional-payment-info'}
+    {ifloop rel="transfer.infos"}
+        <p>{intl d='wiretransfer' l="You may now do a transfer to this bank account: "}</p>
+        <dl class="dl-horizontal">
+            {loop name="wiretransfer.infos" type="wiretransfer.get.info" order_id=$placed_order_id}
+                <dt>{intl d='wiretransfer' l="Account holder name"} : </dt>
+                <dd>{$ACCOUNT_HOLDER_NAME}</dd>
+
+                <dt>{intl d='wiretransfer' l="IBAN"} : </dt>
+                <dd>{$IBAN}</dd>
+
+                <dt>{intl d='wiretransfer' l="BIC code"} : </dt>
+                <dd>{$BIC}</dd>
+            {/loop}
+        </dl>
+    {/ifloop}
+    {elseloop rel="transfer.infos"}
+        <div class="alert alert-danger">
+            {intl d='wiretransfer' l="This order has not been paid using a bank transfert"}
+        </div>
+    {/elseloop}
+ {/block}
