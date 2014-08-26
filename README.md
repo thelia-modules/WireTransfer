@@ -1,10 +1,10 @@
-Wire Tranfeer Payment Module
+Wire Tranfer Payment Module
 ============================
 
 Authors: Thelia <info@thelia.net>, Franck Allimant, <franck@cqfdev.fr>
 
-Summary
--------
+Contents
+--------
 
 fr_FR:
 
@@ -24,6 +24,10 @@ en_US:
 fr_FR
 -----
 
+Ce module permet à vos clients de payer leurs commandes par virement banciare.
+
+Il s'agit d'une amélioration du module PaymentTransfer.
+
 ### Installation
 
 Pour installer le module de paiement par virement, téléchargez l'archive et décompressez la dans ```<dossier de thelia>/local/modules```
@@ -32,7 +36,11 @@ Pour installer le module de paiement par virement, téléchargez l'archive et d�
 
 Tout d'abord, activez le module dans le Back-Office, onglet "Modules", puis cliquez sur "Configurer" sur la ligne du module.
 
-Vi la page de configuration, entrez vos informations bancaires et enregistrez.
+Via la page de configuration, entrez vos informations bancaires et enregistrez.
+
+### Email de notification de paiement
+
+Un email de notification de paiement est envoyé à vos clients lorsque vous avez bien reçu leur virement, et que leur commande passe à l'état payé. Le contenu de ce mail est configurable dans le back-office -> Configuration -> Template e-mail -> Confirmation de virement
 
 ### Boucle
 
@@ -73,15 +81,27 @@ Si vous souhaitez fabriquer une page totalement personnalisée, il vous suffit d
 en_US
 -----
 
+This module offers wire transfer payment to your customers.
+
+This is an improvement of the TranferPayment module. 
+
 ### Install notes
 
 To install the wire transfer payment module, download the archive and uncompress it in ```<path to thelia>/local/modules```
 
-### How to use
+### Usage
 
 You first need to activate the module in the Back-Office, tab "Modules". Then click on "Configure" on the line of the module.
 
 Using module's the configuration page, enter you Bank account information and save.
+
+
+### Payment notification e-mail
+
+A notification email is sent to your customers when you've received their wire transfer, and switcher the order to the "paid" status.
+ 
+The content of this e-mail could be configured in the back-office ->  Le contenu de ce mail est configurable dans le back-office -> Configuration -> Mailing templates -> Wire transfer confirmation
+
 
 ### Loop
 
