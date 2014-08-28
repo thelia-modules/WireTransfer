@@ -34,6 +34,7 @@ use Thelia\Model\Order;
 use Thelia\Module\BaseModule;
 use Thelia\Module\PaymentModuleInterface;
 use Thelia\Tools\URL;
+use WireTransfer\Model\WireTransferConfigQuery;
 
 /**
  * Class WireTransfer
