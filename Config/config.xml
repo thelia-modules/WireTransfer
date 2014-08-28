@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
 
     <loops>
-        <loop class="WireTransfer\Loop\GetBankInformation" name="transfer.get.info" />
+        <loop class="WireTransfer\Loop\GetBankInformation" name="wiretransfer.get.info" />
     </loops>
 
     <forms>
