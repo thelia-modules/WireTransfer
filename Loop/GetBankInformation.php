@@ -30,7 +30,6 @@ use Thelia\Core\Template\Element\LoopResultRow;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
 use Thelia\Model\Base\OrderQuery;
-use WireTransfer\Model\WireTransferConfigQuery;
 use WireTransfer\WireTransfer;
 
 /**
@@ -49,14 +48,14 @@ class GetBankInformation extends BaseLoop implements ArraySearchLoopInterface
     {
         $order = OrderQuery::create()->findPk($this->getOrderId());
 
-        if ($order !== null || $order->getPaymentModuleId() === WireTransfer::getModCode() ) {
+        if ($order !== null || $order->getPaymentModuleId() === WireTransfer::getModuleId() ) {
 
             $loopResultRow = new LoopResultRow();
 
             $loopResultRow
-                ->set("BIC"                , WireTransferConfigQuery::read('bic'))
-                ->set("IBAN"               , WireTransferConfigQuery::read('iban'))
-                ->set("ACCOUNT_HOLDER_NAME", WireTransferConfigQuery::read('name'))
+                ->set("BIC"                , WireTransfer::getConfigValue('bic'))
+                ->set("IBAN"               , WireTransfer::getConfigValue('iban'))
+                ->set("ACCOUNT_HOLDER_NAME", WireTransfer::getConfigValue('name'))
             ;
 
             $loopResult->addRow($loopResultRow);

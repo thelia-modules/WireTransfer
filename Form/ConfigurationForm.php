@@ -29,7 +29,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Core\Translation\Translator;
 use Thelia\Form\BaseForm;
 use WireTransfer\Constraints\BIC;
-use WireTransfer\Model\WireTransferConfigQuery;
 use WireTransfer\WireTransfer;
 
 /**
@@ -54,7 +53,7 @@ class ConfigurationForm extends BaseForm
                     'constraints' => array(new NotBlank()),
                     'required'    => true,
                     'label'       => Translator::getInstance()->trans("Account holder name", [], WireTransfer::MESSAGE_DOMAIN),
-                    'data'        => WireTransferConfigQuery::read('name', ''),
+                    'data'        => WireTransfer::getConfigValue('name', ''),
                     'label_attr' => array(
                         'for' => 'namefield'
                     )
@@ -67,7 +66,7 @@ class ConfigurationForm extends BaseForm
                     'constraints' => array(new NotBlank(), new Iban()),
                     'required'    => true,
                     'label'       => Translator::getInstance()->trans("IBAN (International Bank Account Number)", [], WireTransfer::MESSAGE_DOMAIN),
-                    'data'        => WireTransferConfigQuery::read('iban', ''),
+                    'data'        => WireTransfer::getConfigValue('iban', ''),
                     'label_attr' => array(
                         'for' => 'ibanfield'
                     )
@@ -80,7 +79,7 @@ class ConfigurationForm extends BaseForm
                     'constraints' => array(new NotBlank(), new BIC()),
                     'required'    => true,
                     'label'       => Translator::getInstance()->trans("BIC (Bank Identifier Code)", [], WireTransfer::MESSAGE_DOMAIN),
-                    'data'        => WireTransferConfigQuery::read('bic', ''),
+                    'data'        => WireTransfer::getConfigValue('bic', ''),
                     'label_attr' => array(
                         'for' => 'bicfield'
                     )

@@ -23,13 +23,13 @@
 
 namespace WireTransfer\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Form\Exception\FormValidationException;
 use Thelia\Tools\URL;
 use WireTransfer\Form\ConfigurationForm;
-use WireTransfer\Model\WireTransferConfigQuery;
 use WireTransfer\WireTransfer;
 
 /**
@@ -45,8 +45,8 @@ class ConfigureController extends BaseAdminController
             return $response;
         }
 
-        // Initialize the potential error message, and the potential exception
-        $error_msg = $ex = null;
+        // Initialize the potential exception
+        $ex = null;
 
         // Create the Form from the request
         $configurationForm = new ConfigurationForm($this->getRequest());
@@ -59,7 +59,7 @@ class ConfigureController extends BaseAdminController
             $data = $form->getData();
 
             foreach($data as $name => $value) {
-                WireTransferConfigQuery::set($name, $value);
+                WireTransfer::setConfigValue($name, $value);
             }
 
             // Log configuration modification
@@ -70,7 +70,7 @@ class ConfigureController extends BaseAdminController
             );
 
             // Everything is OK.
-            $this->redirect(URL::getInstance()->absoluteUrl('/admin/module/WireTransfer'));
+            return new RedirectResponse(URL::getInstance()->absoluteUrl('/admin/module/WireTransfer'));
 
         } catch (FormValidationException $ex) {
             // Form cannot be validated. Create the error message using

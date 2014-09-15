@@ -25,6 +25,9 @@ namespace WireTransfer;
 
 use Propel\Runtime\Connection\ConnectionInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Router;
+use Thelia\Core\Event\Order\OrderEvent;
+use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\Translation\Translator;
 use Thelia\Install\Database;
 use Thelia\Log\Tlog;
@@ -34,7 +37,6 @@ use Thelia\Model\Order;
 use Thelia\Module\BaseModule;
 use Thelia\Module\PaymentModuleInterface;
 use Thelia\Tools\URL;
-use WireTransfer\Model\WireTransferConfigQuery;
 
 /**
  * Class WireTransfer
@@ -56,7 +58,10 @@ class WireTransfer extends BaseModule implements PaymentModuleInterface
             $router->generate('wiretransfer.order-placed', ['orderId' => $order->getId()])
         );
 
-        // Redirect to our own route, so that the payment
+        // Clear the cart
+        $this->getDispatcher()->dispatch(TheliaEvents::ORDER_CART_CLEAR, new OrderEvent($order));
+
+        // Redirect to our own route, to display payment information
         return RedirectResponse::create($thankYouPageUrl);
     }
 
@@ -67,11 +72,11 @@ class WireTransfer extends BaseModule implements PaymentModuleInterface
     {
         // Check that all parameters have been entered.
         $valid =
-            WireTransferConfigQuery::read('name', '') != ''
+            $this->getConfigValue('name', '') != ''
             &&
-            WireTransferConfigQuery::read('bic', '') != ''
+            $this->getConfigValue('bic', '') != ''
             &&
-            WireTransferConfigQuery::read('iban', '') != ''
+            $this->getConfigValue('iban', '') != ''
         ;
 
         if (! $valid) {
@@ -112,22 +117,9 @@ class WireTransfer extends BaseModule implements PaymentModuleInterface
     {
         /* insert the images from image folder if first module activation */
         $module = $this->getModuleModel();
-        if (ModuleImageQuery::create()->filterByModule($module)->count() == 0) {
+        
+        if (! $module->isModuleImageDeployed()) {
             $this->deployImageFolder($module, sprintf('%s/images', __DIR__), $con);
         }
-
-        $database = new Database($con->getWrappedConnection());
-
-        $database->insertSql(null, array(__DIR__ . "/Config/thelia.sql"));
-    }
-
-    public static function getModCode()
-    {
-        $mod_code = "WireTransfer";
-
-        return ModuleQuery::create()
-            ->findOneByCode($mod_code)
-            ->getId()
-        ;
     }
 }

@@ -70,10 +70,10 @@ class SendPaymentConfirmationEmail extends BaseAction implements EventSubscriber
      */
     public function sendConfirmationEmail(OrderEvent $event)
     {
-        if ($event->getOrder()->getPaymentModuleId() === WireTransfer::getModCode()) {
+        if ($event->getOrder()->getPaymentModuleId() === WireTransfer::getModuleId()) {
 
             if ($event->getOrder()->isPaid()) {
-                $contact_email = ConfigQuery::read('store_email');
+                $contact_email = ConfigQuery::getStoreEmail();
 
                 if ($contact_email) {
                     $message = MessageQuery::create()
@@ -95,7 +95,7 @@ class SendPaymentConfirmationEmail extends BaseAction implements EventSubscriber
 
                     $instance = \Swift_Message::newInstance()
                         ->addTo($customer->getEmail(), $customer->getFirstname()." ".$customer->getLastname())
-                        ->addFrom($contact_email, ConfigQuery::read('store_name'))
+                        ->addFrom($contact_email, ConfigQuery::getStoreName())
                     ;
 
                     // Build subject and body
