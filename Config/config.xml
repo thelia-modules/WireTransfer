@@ -12,6 +12,12 @@
         <form name="transfer.configure.bic" class="WireTransfer\Form\ConfigurationForm" />
     </forms>
 
+    <hooks>
+        <hook id="cheque.hook" class="WireTransfer\Hook\HookManager" scope="request">
+            <tag name="hook.event_listener" event="order-placed.additional-payment-info" type="front" method="onAdditionalPaymentInfo" />
+        </hook>
+    </hooks>
+
     <services>
         <service id="send.wiretransfer.mail" class="WireTransfer\Listener\SendPaymentConfirmationEmail" scope="request">
             <argument type="service" id="thelia.parser" />

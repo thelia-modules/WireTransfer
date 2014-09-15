@@ -31,6 +31,7 @@ use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\Translation\Translator;
 use Thelia\Install\Database;
 use Thelia\Log\Tlog;
+use Thelia\Model\MessageQuery;
 use Thelia\Model\ModuleImageQuery;
 use Thelia\Model\ModuleQuery;
 use Thelia\Model\Order;
@@ -52,17 +53,7 @@ class WireTransfer extends BaseModule implements PaymentModuleInterface
      */
     public function pay(Order $order)
     {
-        $router = $this->getContainer()->get('router.wiretransfer');
-
-        $thankYouPageUrl = URL::getInstance()->absoluteUrl(
-            $router->generate('wiretransfer.order-placed', ['orderId' => $order->getId()])
-        );
-
-        // Clear the cart
-        $this->getDispatcher()->dispatch(TheliaEvents::ORDER_CART_CLEAR, new OrderEvent($order));
-
-        // Redirect to our own route, to display payment information
-        return RedirectResponse::create($thankYouPageUrl);
+        // Nothing special to do.
     }
 
     /**
@@ -90,36 +81,28 @@ class WireTransfer extends BaseModule implements PaymentModuleInterface
         return $valid;
     }
 
-    /**
-     * Return the order payment success page URL
-     *
-     * @param  int $order_id the order ID
-     * @return string the order payment success page URL
-     */
-    public function getPaymentSuccessPageUrl($order_id)
+    public function install(ConnectionInterface $con = null)
     {
-        $frontOfficeRouter = $this->getContainer()->get('router.front');
+        $database = new Database($con->getWrappedConnection());
 
-        return URL::getInstance()->absoluteUrl(
-            $frontOfficeRouter->generate(
-                "order.placed",
-                array("order_id" => $order_id),
-                Router::ABSOLUTE_URL
-            )
-        );
+        // Insert email message
+        $database->insertSql(null, array(__DIR__ . "/Config/setup.sql"));
+
+        /* insert the images from image folder if not already done */
+        $moduleModel = $this->getModuleModel();
+
+        if (! $moduleModel->isModuleImageDeployed($con)) {
+            $this->deployImageFolder($moduleModel, sprintf('%s/images', __DIR__), $con);
+        }
     }
 
-
-    /**
-     * @param ConnectionInterface $con
-     */
-    public function postActivation(ConnectionInterface $con = null)
+    public function destroy(ConnectionInterface $con = null, $deleteModuleData = false)
     {
-        /* insert the images from image folder if first module activation */
-        $module = $this->getModuleModel();
-        
-        if (! $module->isModuleImageDeployed()) {
-            $this->deployImageFolder($module, sprintf('%s/images', __DIR__), $con);
+        // Delete our message
+        if (null !== $message = MessageQuery::create()->findOneByName('order_confirmation_wiretransfer')) {
+            $message->delete($con);
         }
+
+        parent::destroy($con, $deleteModuleData);
     }
 }

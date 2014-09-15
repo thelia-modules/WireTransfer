@@ -6,9 +6,4 @@
     <route id="wiretransfer.configure" path="/admin/wiretransfer/configure" methods="post">
         <default key="_controller">WireTransfer\Controller\ConfigureController::configure</default>
     </route>
-
-    <route id="wiretransfer.order-placed" path="/wiretransfer/order-placed/{orderId}" methods="get">
-        <default key="_controller">WireTransfer\Controller\PaymentController::orderPlaced</default>
-        <requirement key="orderId">\d+</requirement>
-    </route>
 </routes>
