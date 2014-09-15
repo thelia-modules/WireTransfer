@@ -24,20 +24,13 @@
 namespace WireTransfer;
 
 use Propel\Runtime\Connection\ConnectionInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Routing\Router;
-use Thelia\Core\Event\Order\OrderEvent;
-use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\Translation\Translator;
 use Thelia\Install\Database;
 use Thelia\Log\Tlog;
 use Thelia\Model\MessageQuery;
-use Thelia\Model\ModuleImageQuery;
-use Thelia\Model\ModuleQuery;
 use Thelia\Model\Order;
 use Thelia\Module\BaseModule;
 use Thelia\Module\PaymentModuleInterface;
-use Thelia\Tools\URL;
 
 /**
  * Class WireTransfer

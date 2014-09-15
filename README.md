@@ -71,12 +71,8 @@ Un email de notification de paiement est envoyé à vos clients lorsque vous ave
 ### Intégration
 
 
-Les informations bancaires du commerçant sont affichées sur la page `order-placed.html` du template frontOffice standard, en utilisant le bloc Smarty `additional-payment-info`.
-
-> Vous devrez peut-être ajouter ce block dans le fichier `order-placed.html` s'il n'est pas déjà présent.
-
-Si vous souhaitez fabriquer une page totalement personnalisée, il vous suffit de la créer dans le fichier `<chemin-du-module>/template/frontOffice/default/transfer-payment-order-placed.html`
-
+Les informations bancaires du commerçant sont affichées sur la page `order-placed.html` du template frontOffice standard,
+en utilisant le hook `order-placed.additional-payment-info`.
 
 en_US
 -----
@@ -132,8 +128,5 @@ The content of this e-mail could be configured in the back-office ->  Le contenu
 
 ### Integration
 
-The bank account information are displayed on `order-placed.html` of the default front office template, using the   Smarty block `additional-payment-info`.
-
-> You may have to add this block to your `order-placed.html`file if it is not already present.
-
-If you want to create a fully customized page, create it in the `<module-base-path>/template/frontOffice/default/transfer-payment-order-placed.html` file.
+The bank account information are displayed in `order-placed.html` file of the default front office template,
+using the `order-placed.additional-payment-info` hook.
