@@ -29,15 +29,14 @@ use Thelia\Install\Database;
 use Thelia\Log\Tlog;
 use Thelia\Model\MessageQuery;
 use Thelia\Model\Order;
-use Thelia\Module\BaseModule;
-use Thelia\Module\PaymentModuleInterface;
+use Thelia\Module\AbstractPaymentModule;
 
 /**
  * Class WireTransfer
  * @package WireTransfer
  * author Thelia <info@thelia.net>
  */
-class WireTransfer extends BaseModule implements PaymentModuleInterface
+class WireTransfer extends AbstractPaymentModule
 {
     const MESSAGE_DOMAIN = 'wiretransfer';
 
