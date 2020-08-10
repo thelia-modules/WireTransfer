@@ -7,7 +7,7 @@
     <descriptive locale="en_US">
         <title>Wire transfer payment</title>
     </descriptive>
-    <version>1.2</version>
+    <version>1.2.0</version>
     <author>
         <name>Thelia</name>
         <email>info@thelia.net</email>
