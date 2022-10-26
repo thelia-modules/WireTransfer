@@ -24,6 +24,7 @@
 namespace WireTransfer;
 
 use Propel\Runtime\Connection\ConnectionInterface;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
 use Thelia\Core\Translation\Translator;
 use Thelia\Install\Database;
 use Thelia\Log\Tlog;
@@ -51,7 +52,7 @@ class WireTransfer extends AbstractPaymentModule
     /**
      * @return boolean true if all parameters have been entered.
      */
-    public function isValidPayment()
+    public function isValidPayment(): bool
     {
         // Check that all parameters have been entered.
         $valid =
@@ -73,7 +74,7 @@ class WireTransfer extends AbstractPaymentModule
         return $valid;
     }
 
-    public function install(ConnectionInterface $con = null)
+    public function install(ConnectionInterface $con = null): void
     {
         $database = new Database($con->getWrappedConnection());
 
@@ -88,7 +89,7 @@ class WireTransfer extends AbstractPaymentModule
         }
     }
 
-    public function destroy(ConnectionInterface $con = null, $deleteModuleData = false)
+    public function destroy(ConnectionInterface $con = null, $deleteModuleData = false): void
     {
         // Delete our message
         if (null !== $message = MessageQuery::create()->findOneByName('order_confirmation_wiretransfer')) {
@@ -104,8 +105,16 @@ class WireTransfer extends AbstractPaymentModule
      *
      * @return bool
      */
-    public function manageStockOnCreation()
+    public function manageStockOnCreation(): bool
     {
         return false;
+    }
+
+    public static function configureServices(ServicesConfigurator $servicesConfigurator): void
+    {
+        $servicesConfigurator->load(self::getModuleCode().'\\', __DIR__)
+            ->exclude([THELIA_MODULE_DIR.ucfirst(self::getModuleCode()).'/I18n/*'])
+            ->autowire(true)
+            ->autoconfigure(true);
     }
 }

@@ -71,37 +71,21 @@ class SendPaymentConfirmationEmail extends BaseAction implements EventSubscriber
     public function sendConfirmationEmail(OrderEvent $event)
     {
         if ($event->getOrder()->getPaymentModuleId() === WireTransfer::getModuleId()) {
-
             if ($event->getOrder()->isPaid()) {
                 $contact_email = ConfigQuery::getStoreEmail();
 
                 if ($contact_email) {
-                    $message = MessageQuery::create()
-                        ->filterByName('order_confirmation_wiretransfer')
-                        ->findOne();
-
-                    if (null === $message) {
-                        throw new \Exception("Failed to load message 'order_confirmation_wiretransfer'.");
-                    }
-
                     $order = $event->getOrder();
                     $customer = $order->getCustomer();
 
-                    $this->parser->assign('order_id', $order->getId());
-                    $this->parser->assign('order_ref', $order->getRef());
-
-                    $message
-                        ->setLocale($order->getLang()->getLocale());
-
-                    $instance = \Swift_Message::newInstance()
-                        ->addTo($customer->getEmail(), $customer->getFirstname()." ".$customer->getLastname())
-                        ->addFrom($contact_email, ConfigQuery::getStoreName())
-                    ;
-
-                    // Build subject and body
-                    $message->buildMessage($this->parser, $instance);
-
-                    $this->getMailer()->send($instance);
+                    $this->getMailer()->sendEmailToCustomer(
+                        'order_confirmation_wiretransfer',
+                        $customer,
+                        [
+                            'order_id' => $order->getId(),
+                            'order_ref'=> $order->getRef()
+                        ]
+                    );
                 }
             }
         }

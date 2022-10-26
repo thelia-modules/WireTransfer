@@ -24,6 +24,7 @@
 
 namespace WireTransfer\Form;
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Validator\Constraints\Iban;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Core\Translation\Translator;
@@ -48,7 +49,7 @@ class ConfigurationForm extends BaseForm
         $this->formBuilder
             ->add(
                 'name',
-                'text',
+                TextType::class,
                 array(
                     'constraints' => array(new NotBlank()),
                     'required'    => true,
@@ -61,7 +62,7 @@ class ConfigurationForm extends BaseForm
             )
             ->add(
                 'iban',
-                'text',
+                TextType::class,
                 array(
                     'constraints' => array(new NotBlank(), new Iban()),
                     'required'    => true,
@@ -74,7 +75,7 @@ class ConfigurationForm extends BaseForm
             )
             ->add(
                 'bic',
-                'text',
+                TextType::class,
                 array(
                     'constraints' => array(new NotBlank(), new BIC()),
                     'required'    => true,
@@ -91,7 +92,7 @@ class ConfigurationForm extends BaseForm
     /**
      * @return string the name of you form. This name must be unique
      */
-    public function getName()
+    public static function getName()
     {
         return "configurewiretransfer";
     }
