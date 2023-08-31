@@ -1,0 +1,61 @@
+{if isset($smarty.get.errmes) && !empty($smarty.get.errmes)}
+    <div class="alert alert-danger">
+        {$smarty.get.errmes}
+    </div>
+{/if}
+
+<div class="row">
+    <div class="col-md-12 general-block-decorator">
+
+        <div class="row">
+            <div class="col-md-12 title title-without-tabs">
+                {intl d='wiretransfer.ai' l="Bank account configuration"}
+            </div>
+        </div>
+
+        <div class="form-container">
+            <div class="row">
+                <div class="col-md-12">
+
+                    {form name="transfer.configure.bic"}
+
+                        <form action="{url path="/admin/wiretransfer/configure"}" method="post">
+                            {include
+                                file = "includes/inner-form-toolbar.html"
+                                hide_flags = true
+
+                                page_url  = {url path="/admin/module/WireTransfer"}
+                                close_url = {url path="/admin/modules"}
+                            }
+
+                            {form_hidden_fields form=$form}
+
+                            {if $form_error}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="alert alert-danger">{$form_error_message}</div>
+                                    </div>
+                                </div>
+                            {/if}
+
+                            {render_form_field field="name"}
+                            {render_form_field field="iban"}
+                            {render_form_field field="bic"}
+                            {render_form_field field="message" extra_class="wysiwyg"}
+
+                            {include
+                                file = "includes/inner-form-toolbar.html"
+                                hide_flags = true
+                                page_bottom = true
+
+                                page_url  = {url path="/admin/module/WireTransfer"}
+                                close_url = {url path="/admin/modules"}
+                            }
+
+                        </form>
+                    {/form}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
