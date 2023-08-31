@@ -1,25 +1,30 @@
 <?php
-/*************************************************************************************/
-/*                                                                                   */
-/*      Thelia	                                                                     */
-/*                                                                                   */
-/*      Copyright (c) OpenStudio                                                     */
-/*      email : info@thelia.net                                                      */
-/*      web : http://www.thelia.net                                                  */
-/*                                                                                   */
-/*      This program is free software; you can redistribute it and/or modify         */
-/*      it under the terms of the GNU General Public License as published by         */
-/*      the Free Software Foundation; either version 3 of the License                */
-/*                                                                                   */
-/*      This program is distributed in the hope that it will be useful,              */
-/*      but WITHOUT ANY WARRANTY; without even the implied warranty of               */
-/*      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                */
-/*      GNU General Public License for more details.                                 */
-/*                                                                                   */
-/*      You should have received a copy of the GNU General Public License            */
-/*	    along with this program. If not, see <http://www.gnu.org/licenses/>.         */
-/*                                                                                   */
-/*************************************************************************************/
+
+/*
+ * This file is part of the Thelia package.
+ * http://www.thelia.net
+ *
+ * (c) OpenStudio <info@thelia.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/*      Copyright (c) OpenStudio */
+/*      email : info@thelia.net */
+/*      web : http://www.thelia.net */
+
+/*      This program is free software; you can redistribute it and/or modify */
+/*      it under the terms of the GNU General Public License as published by */
+/*      the Free Software Foundation; either version 3 of the License */
+
+/*      This program is distributed in the hope that it will be useful, */
+/*      but WITHOUT ANY WARRANTY; without even the implied warranty of */
+/*      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the */
+/*      GNU General Public License for more details. */
+
+/*      You should have received a copy of the GNU General Public License */
+/*	    along with this program. If not, see <http://www.gnu.org/licenses/>. */
 
 namespace WireTransfer\Controller;
 
@@ -35,8 +40,8 @@ use WireTransfer\Form\ConfigurationForm;
 use WireTransfer\WireTransfer;
 
 /**
- * Class SetTransferConfig
- * @package WireTransfer\Controller
+ * Class SetTransferConfig.
+ *
  * @author Thelia <info@thelia.net>
  */
 class ConfigureController extends BaseAdminController
@@ -51,35 +56,33 @@ class ConfigureController extends BaseAdminController
         $ex = null;
 
         // Create the Form from the request
-        $configurationForm = new ConfigurationForm($request);
+        $configurationForm = $this->createForm(ConfigurationForm::class);
 
         try {
             // Check the form against constraints violations
-            $form = $this->validateForm($configurationForm, "POST");
+            $form = $this->validateForm($configurationForm, 'POST');
 
             // Get the form field values
             $data = $form->getData();
 
-            foreach($data as $name => $value) {
+            foreach ($data as $name => $value) {
                 WireTransfer::setConfigValue($name, $value);
             }
 
             // Log configuration modification
             $this->adminLogAppend(
-                "wiretransfer.configuration.message",
+                'wiretransfer.configuration.message',
                 AccessManager::UPDATE,
-                sprintf("WireTransfer configuration updated")
+                'WireTransfer configuration updated'
             );
 
             // Everything is OK.
             return new RedirectResponse(URL::getInstance()->absoluteUrl('/admin/module/WireTransfer'));
-
         } catch (FormValidationException $ex) {
             // Form cannot be validated. Create the error message using
             // the BaseAdminController helper method.
             $error_msg = $this->createStandardFormValidationErrorMessage($ex);
-        }
-        catch (\Exception $ex) {
+        } catch (\Exception $ex) {
             // Any other error
             $error_msg = $ex->getMessage();
         }
@@ -88,7 +91,7 @@ class ConfigureController extends BaseAdminController
         // just redisplay the same template.
         // Setup the Form error context, to make error information available in the template.
         $this->setupFormErrorContext(
-            $translator->trans("Wire transfer configuration", [], WireTransfer::MESSAGE_DOMAIN),
+            $translator->trans('Wire transfer configuration', [], WireTransfer::MESSAGE_DOMAIN),
             $error_msg,
             $configurationForm,
             $ex
@@ -96,6 +99,6 @@ class ConfigureController extends BaseAdminController
 
         // Do not redirect at this point, or the error context will be lost.
         // Just redisplay the current template.
-        return $this->render('module-configure', array('module_code' => 'WireTransfer'));
+        return $this->render('module-configure', ['module_code' => 'WireTransfer']);
     }
 }

@@ -1,7 +1,7 @@
 {ifloop rel="wiretransfer.infos"}
     <p>{intl d='wiretransfer.fo.default' l="You may now do a transfer to this bank account: "}</p>
+    {loop name="wiretransfer.infos" type="wiretransfer.get.info" order_id=$placed_order_id}
     <dl class="dl-horizontal">
-        {loop name="wiretransfer.infos" type="wiretransfer.get.info" order_id=$placed_order_id}
             <dt>{intl d='wiretransfer.fo.default' l="Account holder name"} : </dt>
             <dd>{$ACCOUNT_HOLDER_NAME}</dd>
 
@@ -10,8 +10,11 @@
 
             <dt>{intl d='wiretransfer.fo.default' l="BIC code"} : </dt>
             <dd>{$BIC}</dd>
-        {/loop}
     </dl>
+    {if $MESSAGE}
+        <div class="wire-transfer-message">{$MESSAGE nofilter}</div>
+    {/if}
+    {/loop}
 {/ifloop}
 {elseloop rel="wiretransfer.infos"}
     <div class="alert alert-danger">
