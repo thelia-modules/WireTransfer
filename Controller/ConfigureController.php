@@ -26,9 +26,12 @@
 /*      You should have received a copy of the GNU General Public License */
 /*	    along with this program. If not, see <http://www.gnu.org/licenses/>. */
 
+declare(strict_types=1);
+
 namespace WireTransfer\Controller;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Security\AccessManager;
@@ -97,8 +100,20 @@ class ConfigureController extends BaseAdminController
             $ex
         );
 
-        // Do not redirect at this point, or the error context will be lost.
-        // Just redisplay the current template.
+        // Thelia 3 renders the config screen through a hook (default-twig), so redirect back
+        // to the module configuration page. On Thelia 2, redisplay the current template inline
+        // to keep the form error context.
+        if (WireTransfer::isThelia3()) {
+            // The redirect drops the ParserContext form error, so surface the failure through
+            // the flash bag (rendered by the default-twig base template as app.flashes).
+            $session = $request->getSession();
+            if ($session instanceof FlashBagAwareSessionInterface) {
+                $session->getFlashBag()->add('danger', $error_msg);
+            }
+
+            return new RedirectResponse(URL::getInstance()->absoluteUrl('/admin/module/WireTransfer'));
+        }
+
         return $this->render('module-configure', ['module_code' => 'WireTransfer']);
     }
 }

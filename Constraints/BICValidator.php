@@ -22,9 +22,12 @@
 /*************************************************************************************/
 
 
+declare(strict_types=1);
+
 namespace WireTransfer\Constraints;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Thelia\Core\Translation\Translator;
 
 /**
@@ -43,13 +46,19 @@ class BICValidator extends ConstraintValidator {
      */
     public function validate($value, Constraint $constraint)
     {
+        if (!$constraint instanceof BIC) {
+            throw new UnexpectedTypeException($constraint, BIC::class);
+        }
+
         if (null === $value || '' === $value) {
             return;
         }
 
         $teststring = preg_replace('/\s+/', '', $value);
 
-        if(!preg_match("([a-zA-Z]{4}[a-zA-Z]{2}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?)", $teststring)) {
+        // A BIC is 8 or 11 characters: 6 letters + 2 alphanumerics, then an optional 3-char branch code.
+        // The pattern is anchored (^...$) so partial matches embedded in a longer string are rejected.
+        if(!preg_match('/^[a-zA-Z]{6}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?$/', $teststring)) {
             $this->context->addViolation(
                 Translator::getInstance()->trans(
                     $constraint->message

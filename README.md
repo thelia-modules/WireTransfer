@@ -130,3 +130,43 @@ The content of this e-mail could be configured in the back-office ->  Le contenu
 
 The bank account information are displayed in `order-placed.html` file of the default front office template,
 using the `order-placed.additional-payment-info` hook.
+
+
+Thelia 3 (version 2.2.0+)
+-------------------------
+
+À partir de la 2.2.0, le module est **bi-compatible Thelia 2.5 et Thelia 3** (branche twig, Symfony 7.4,
+Flexy). L'aiguillage se fait via `WireTransfer::isThelia3()` ; le code Thelia 2 (templates Smarty, hooks)
+reste en place et n'est actif que sous Thelia 2. As of 2.2.0 the module is **dual-compatible with Thelia 2.5
+and Thelia 3**; the Thelia 2 code path stays in place and is only active under Thelia 2.
+
+### Ce qui change en Thelia 3 / What changes on Thelia 3
+
+- **Back-office** : la page de configuration est rendue en `default-twig` (Twig) via le hook
+  `WireTransfer\Hook\Back\ConfigurationHook` (`module.configuration`), template
+  `templates/backOffice/default-twig/WireTransfer/module-configuration.html.twig`. En Thelia 2, le rendu
+  Smarty (`templates/backOffice/default/module_configuration.html`) est conservé.
+- **Front-office (Flexy)** : le hook Smarty `order-placed.additional-payment-info` n'existe plus. Les
+  coordonnées bancaires sont désormais fournies par une **fonction Twig** à appeler dans le thème, sur la
+  page de confirmation de commande :
+
+    ```twig
+    {{ wiretransfer_bank_info(order_id) }}
+    ```
+
+  Elle ne rend rien si la commande n'a pas été payée par virement. En Thelia 2, l'affichage reste assuré par
+  le hook `order-placed.additional-payment-info` (template Smarty `order-placed.additional-payment-info.html`)
+  et la boucle `wiretransfer.get.info`.
+- **Routes** : déclarées dans `Config/routing.xml` (chargé par Thelia 2 **et** Thelia 3), sans
+  attribut `#[Route]` — sinon Thelia 3 enregistrerait la route en double (chemin inchangé
+  `/admin/wiretransfer/configure`).
+- **Compatibilité des signatures** : `pay(Order): ?Response`, `install/destroy(?ConnectionInterface)`,
+  `ConfigurationForm::getName(): string`, et types de retour sur la boucle — compatibles Thelia 2 et 3.
+- **Classe `Database`** résolue à l'exécution (`Thelia\Install\Database` en T2, `Thelia\Core\Install\Database`
+  en T3).
+
+### Boucle `wiretransfer.get.info`
+
+Toujours disponible et inchangée (Thelia 2 et Thelia 3) : elle retourne `ACCOUNT_HOLDER_NAME`, `IBAN`, `BIC`,
+`MESSAGE` pour un `order_id`. Sous Thelia 3 / Flexy, préférez la fonction Twig `wiretransfer_bank_info()`
+ci-dessus, qui encapsule cette logique.

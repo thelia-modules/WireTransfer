@@ -26,6 +26,8 @@
 /*      You should have received a copy of the GNU General Public License */
 /*	    along with this program. If not, see <http://www.gnu.org/licenses/>. */
 
+declare(strict_types=1);
+
 namespace WireTransfer\Form;
 
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -109,7 +111,7 @@ class ConfigurationForm extends BaseForm
     /**
      * @return string the name of you form. This name must be unique
      */
-    public static function getName()
+    public static function getName(): string
     {
         return 'configurewiretransfer';
     }

@@ -22,6 +22,8 @@
 /*************************************************************************************/
 
 
+declare(strict_types=1);
+
 namespace WireTransfer\Constraints;
 use Symfony\Component\Validator\Constraint;
 
