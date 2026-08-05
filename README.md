@@ -145,11 +145,10 @@ Le support Thelia 2 a été retiré : pour Thelia 2.5, utilisez la ligne 2.1. As
   `WireTransfer\Hook\Back\ConfigurationHook` (`module.configuration`, déclaré par
   `getSubscribedHooks()`, donc auto-découvert — `Config/config.xml` n'a plus de section `<hooks>`),
   template `templates/backOffice/default-twig/WireTransfer/module-configuration.html.twig`.
-- **Front-office** : Thelia 3 a supprimé les hooks Smarty du front. Il fournit à la place
-  `Thelia\Core\Hook\Theme\ThemeHookInterface`, répondu là où un thème appelle
-  `theme_hook('point')` — mais le thème doit déclarer le point, ce que `vallereuil-scierie` ne
-  fait pas encore. En attendant, les coordonnées bancaires sont exposées par une **fonction
-  Twig** :
+- **Front-office** : Thelia 3 a supprimé les hooks Smarty du front **sans remplacement
+  fonctionnel** — `ThemeHookInterface` et le tag `thelia.theme_hook` existent, mais rien ne
+  consomme le tag et aucune fonction Twig `theme_hook()` n'est enregistrée. Les coordonnées
+  bancaires sont donc exposées par une **fonction Twig** :
 
     ```twig
     {{ wiretransfer_bank_info(order_id) }}
