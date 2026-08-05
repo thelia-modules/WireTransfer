@@ -21,11 +21,9 @@ use Thelia\Core\Form\TheliaFormFactory;
 use Thelia\Core\Hook\BaseHook;
 use Thelia\Core\Template\Parser\ParserResolver;
 use WireTransfer\Form\ConfigurationForm;
-use WireTransfer\WireTransfer;
 
 /**
- * Renders the WireTransfer configuration screen in the Thelia 3 default-twig back-office.
- * The Thelia 2 rendering stays in WireTransfer\Hook\HookManager (Smarty).
+ * Renders the WireTransfer configuration screen in the default-twig back-office.
  */
 class ConfigurationHook extends BaseHook
 {
@@ -39,12 +37,6 @@ class ConfigurationHook extends BaseHook
 
     public static function getSubscribedHooks(): array
     {
-        if (!WireTransfer::isThelia3()) {
-            return []; // Thelia 2 uses WireTransfer\Hook\HookManager (config.xml) instead.
-        }
-
-        // Distinct method name from HookManager::onModuleConfigure so the two classes do not
-        // overwrite each other's module_hook row (keyed by module + hook + method).
         return [
             'module.configuration' => [
                 ['type' => 'back', 'method' => 'onModuleConfiguration'],

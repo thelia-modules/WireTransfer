@@ -33,6 +33,7 @@ namespace WireTransfer;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
 use Symfony\Component\HttpFoundation\Response;
+use Thelia\Core\Install\Database;
 use Thelia\Core\Translation\Translator;
 use Thelia\Log\Tlog;
 use Thelia\Model\MessageQuery;
@@ -79,7 +80,7 @@ class WireTransfer extends AbstractPaymentModule
 
     public function install(?ConnectionInterface $con = null): void
     {
-        $database = $this->resolveDatabase($con->getWrappedConnection());
+        $database = new Database($con->getWrappedConnection());
 
         // Insert email message
         $database->insertSql(null, [__DIR__.'/Config/setup.sql']);
@@ -111,39 +112,10 @@ class WireTransfer extends AbstractPaymentModule
         return false;
     }
 
-    /**
-     * True on Thelia 3 (twig branch), false on Thelia 2. Gates the Thelia 3-only code paths
-     * (default-twig hook, Twig extension) so the module works on both versions.
-     */
-    public static function isThelia3(): bool
-    {
-        return class_exists(\Thelia\Core\Install\Database::class);
-    }
-
-    private function resolveDatabase(mixed $connection): object
-    {
-        // Thelia 3 moved Database from Thelia\Install to Thelia\Core\Install.
-        $class = self::isThelia3()
-            ? \Thelia\Core\Install\Database::class
-            : \Thelia\Install\Database::class;
-
-        return new $class($connection);
-    }
-
     public static function configureServices(ServicesConfigurator $servicesConfigurator): void
     {
-        $exclude = [__DIR__.'/I18n/*'];
-
-        // Thelia 3-only classes depend on services absent from Thelia 2 (TheliaFormFactory,
-        // the theme Twig runtime): do not wire them there.
-        if (!self::isThelia3()) {
-            $exclude[] = __DIR__.'/Hook/Back/*';
-            $exclude[] = __DIR__.'/Twig/*';
-            $exclude[] = __DIR__.'/Service/WireTransferBankInfoRenderer.php';
-        }
-
         $servicesConfigurator->load(self::getModuleCode().'\\', __DIR__)
-            ->exclude($exclude)
+            ->exclude([__DIR__.'/I18n/*'])
             ->autowire(true)
             ->autoconfigure(true);
     }

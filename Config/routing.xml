@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Routes declared in XML so they register on BOTH Thelia 2 (annotation router reads XML/
-    docblocks, not PHP attributes) and Thelia 3 (which also loads module Config/routing.xml).
-    Do NOT also add #[Route] attributes on the controller: Thelia 3 would then register the
-    route twice.
+    Route declared in XML only. Do NOT also add a #[Route] attribute on the controller:
+    Thelia 3 loads module Config/routing.xml IN ADDITION to scanning attributes, so the route
+    would be registered twice.
 -->
 <routes xmlns="http://symfony.com/schema/routing"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

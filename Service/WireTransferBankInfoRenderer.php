@@ -19,9 +19,9 @@ use Thelia\Model\OrderQuery;
 use WireTransfer\WireTransfer;
 
 /**
- * Builds the "bank account details" markup shown on the order confirmation page (Thelia 3
- * Flexy theme), replacing the Thelia 2 `order-placed.additional-payment-info` Smarty hook.
- * Kept out of the Twig extension so the extension stays a thin integration layer.
+ * Builds the "bank account details" markup shown on the order confirmation page of the Flexy
+ * theme, which has no front-office hook to render them into. Kept out of the Twig extension so
+ * the extension stays a thin integration layer.
  */
 final readonly class WireTransferBankInfoRenderer
 {
@@ -42,12 +42,12 @@ final readonly class WireTransferBankInfoRenderer
         $message = (string) WireTransfer::getConfigValue('message');
 
         $translator = Translator::getInstance();
-        $intro = htmlspecialchars($translator->trans('You may now do a transfer to this bank account: ', [], 'wiretransfer.fo.default'), ENT_QUOTES);
-        $holderLabel = htmlspecialchars($translator->trans('Account holder name', [], 'wiretransfer.fo.default'), ENT_QUOTES);
-        $ibanLabel = htmlspecialchars($translator->trans('IBAN', [], 'wiretransfer.fo.default'), ENT_QUOTES);
-        $bicLabel = htmlspecialchars($translator->trans('BIC code', [], 'wiretransfer.fo.default'), ENT_QUOTES);
+        $intro = htmlspecialchars($translator->trans('You may now do a transfer to this bank account: ', [], WireTransfer::MESSAGE_DOMAIN), ENT_QUOTES);
+        $holderLabel = htmlspecialchars($translator->trans('Account holder name', [], WireTransfer::MESSAGE_DOMAIN), ENT_QUOTES);
+        $ibanLabel = htmlspecialchars($translator->trans('IBAN', [], WireTransfer::MESSAGE_DOMAIN), ENT_QUOTES);
+        $bicLabel = htmlspecialchars($translator->trans('BIC code', [], WireTransfer::MESSAGE_DOMAIN), ENT_QUOTES);
 
-        // The merchant-configured message is trusted admin content (rendered raw, as in T2).
+        // The merchant-configured message is trusted admin content, so it is rendered raw.
         $messageBlock = '' !== $message ? '<div class="wire-transfer-message">'.$message.'</div>' : '';
 
         return <<<HTML

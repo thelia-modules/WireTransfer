@@ -12,12 +12,12 @@
         <form name="transfer.configure.bic" class="WireTransfer\Form\ConfigurationForm" />
     </forms>
 
-    <hooks>
-        <hook id="wiretransfer.hook" class="WireTransfer\Hook\HookManager" scope="request">
-            <tag name="hook.event_listener" event="module.configuration" type="back" method="onModuleConfigure" />
-            <tag name="hook.event_listener" event="order-placed.additional-payment-info" type="front" method="onAdditionalPaymentInfo" />
-        </hook>
-    </hooks>
+    <!--
+        No <hooks> section: WireTransfer\Hook\Back\ConfigurationHook declares itself through
+        getSubscribedHooks(), which Thelia 3 auto-discovers. The front-office needs no hook —
+        Flexy has none, so the theme renders the bank details with the wiretransfer_bank_info()
+        Twig function.
+    -->
 
     <services>
         <service id="send.wiretransfer.mail" class="WireTransfer\Listener\SendPaymentConfirmationEmail" scope="request">

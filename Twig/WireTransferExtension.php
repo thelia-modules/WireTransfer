@@ -19,8 +19,9 @@ use Twig\TwigFunction;
 use WireTransfer\Service\WireTransferBankInfoRenderer;
 
 /**
- * Exposes the WireTransfer bank details to the Flexy theme (Thelia 3 has no front Smarty hook).
- * Call it on the order confirmation page, e.g. {{ wiretransfer_bank_info(order_id) }}.
+ * Exposes the WireTransfer bank details to the Flexy theme, which has no front-office hook to
+ * render them into. Call it on the order confirmation page, e.g.
+ * {{ wiretransfer_bank_info(order_id) }}.
  */
 final class WireTransferExtension extends AbstractExtension
 {
