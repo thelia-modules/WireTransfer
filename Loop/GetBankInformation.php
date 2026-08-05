@@ -26,6 +26,8 @@
 /*      You should have received a copy of the GNU General Public License */
 /*	    along with this program. If not, see <http://www.gnu.org/licenses/>. */
 
+declare(strict_types=1);
+
 namespace WireTransfer\Loop;
 
 use Thelia\Core\Template\Element\ArraySearchLoopInterface;
@@ -47,11 +49,11 @@ class GetBankInformation extends BaseLoop implements ArraySearchLoopInterface
     /**
      * @return LoopResult
      */
-    public function parseResults(LoopResult $loopResult)
+    public function parseResults(LoopResult $loopResult): LoopResult
     {
         $order = OrderQuery::create()->findPk($this->getOrderId());
 
-        if ($order !== null || $order->getPaymentModuleId() === WireTransfer::getModuleId()) {
+        if ($order !== null && $order->getPaymentModuleId() === WireTransfer::getModuleId()) {
             $loopResultRow = new LoopResultRow();
 
             $loopResultRow
@@ -67,7 +69,7 @@ class GetBankInformation extends BaseLoop implements ArraySearchLoopInterface
         return $loopResult;
     }
 
-    protected function getArgDefinitions()
+    protected function getArgDefinitions(): ArgumentCollection
     {
         return new ArgumentCollection(
             Argument::createIntTypeArgument('order_id', null, true, false)
@@ -79,7 +81,7 @@ class GetBankInformation extends BaseLoop implements ArraySearchLoopInterface
      *
      * @return array
      */
-    public function buildArray()
+    public function buildArray(): array
     {
         // Return an array containing one element, so that parseResults() will be called one time.
         return ['one-element'];
