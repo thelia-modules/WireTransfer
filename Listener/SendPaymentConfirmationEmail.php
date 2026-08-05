@@ -25,83 +25,63 @@ declare(strict_types=1);
 
 namespace WireTransfer\Listener;
 
-use WireTransfer\WireTransfer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Thelia\Action\BaseAction;
 use Thelia\Core\Event\Order\OrderEvent;
 use Thelia\Core\Event\TheliaEvents;
 use Thelia\Mailer\MailerFactory;
-use Thelia\Core\Template\ParserInterface;
 use Thelia\Model\ConfigQuery;
-use Thelia\Model\MessageQuery;
+use WireTransfer\WireTransfer;
+
 /**
- * Class SendEMail
- * @package IciRelais\Listener
- * @author Thelia <info@thelia.net>
+ * Sends the wire-transfer confirmation email once the order is marked as paid.
+ *
+ * Registered by auto-discovery only (`WireTransfer::configureServices()`). It must NOT also be
+ * declared in Config/config.xml: two service ids for one subscriber class means two listeners,
+ * and the customer gets the email twice.
  */
 class SendPaymentConfirmationEmail extends BaseAction implements EventSubscriberInterface
 {
-
-    /**
-     * @var MailerFactory
-     */
-    protected $mailer;
-    /**
-     * @var ParserInterface
-     */
-    protected $parser;
-
-    public function __construct(ParserInterface $parser,MailerFactory $mailer)
-    {
-        $this->parser = $parser;
-        $this->mailer = $mailer;
+    public function __construct(
+        private readonly MailerFactory $mailer,
+    ) {
     }
 
-    /**
-     * @return \Thelia\Mailer\MailerFactory
-     */
-    public function getMailer()
+    public function getMailer(): MailerFactory
     {
         return $this->mailer;
     }
 
-    /*
-     * @params OrderEvent $order
-     *
-     * Checks if order delivery module is icirelais and if order new status is sent, send an email to the customer.
+    /**
+     * Notifies the customer once an order paid by wire transfer reaches the paid status.
      */
-    public function sendConfirmationEmail(OrderEvent $event)
+    public function sendConfirmationEmail(OrderEvent $event): void
     {
-        if ($event->getOrder()->getPaymentModuleId() === WireTransfer::getModuleId()) {
-            if ($event->getOrder()->isPaid()) {
-                $contact_email = ConfigQuery::getStoreEmail();
+        $order = $event->getOrder();
 
-                if ($contact_email) {
-                    $order = $event->getOrder();
-                    $customer = $order->getCustomer();
-
-                    $this->getMailer()->sendEmailToCustomer(
-                        'order_confirmation_wiretransfer',
-                        $customer,
-                        [
-                            'order_id' => $order->getId(),
-                            'order_ref'=> $order->getRef()
-                        ]
-                    );
-                }
-            }
+        if ($order->getPaymentModuleId() !== WireTransfer::getModuleId() || !$order->isPaid()) {
+            return;
         }
 
-    }
+        // No store email configured means the mailer has no sender to work with.
+        if (!ConfigQuery::getStoreEmail()) {
+            return;
+        }
 
-    /**
-     * @inheritdoc
-     */
-    public static function getSubscribedEvents()
-    {
-        return array(
-            TheliaEvents::ORDER_UPDATE_STATUS => array("sendConfirmationEmail", 128)
+        $this->getMailer()->sendEmailToCustomer(
+            'order_confirmation_wiretransfer',
+            $order->getCustomer(),
+            [
+                'order_id' => $order->getId(),
+                'order_ref' => $order->getRef(),
+            ]
         );
     }
 
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            TheliaEvents::ORDER_UPDATE_STATUS => ['sendConfirmationEmail', 128],
+        ];
+    }
 }

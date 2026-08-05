@@ -80,7 +80,11 @@ class WireTransfer extends AbstractPaymentModule
 
     public function install(?ConnectionInterface $con = null): void
     {
-        $database = new Database($con->getWrappedConnection());
+        // $con is passed straight through: Database's constructor accepts
+        // ConnectionInterface|PDO|null, unwraps a ConnectionWrapper itself and falls back to a
+        // Propel write connection when given null. Calling getWrappedConnection() here would
+        // duplicate that and blow up on the null the signature explicitly allows.
+        $database = new Database($con);
 
         // Insert email message
         $database->insertSql(null, [__DIR__.'/Config/setup.sql']);
@@ -88,7 +92,7 @@ class WireTransfer extends AbstractPaymentModule
         /* insert the images from image folder if not already done */
         $moduleModel = $this->getModuleModel();
 
-        if (!$moduleModel->isModuleImageDeployed($con)) {
+        if (!$moduleModel->isModuleImageDeployed()) {
             $this->deployImageFolder($moduleModel, sprintf('%s/images', __DIR__), $con);
         }
     }

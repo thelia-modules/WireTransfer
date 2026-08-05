@@ -46,7 +46,10 @@ use WireTransfer\WireTransfer;
  */
 class ConfigurationForm extends BaseForm
 {
-    protected function trans($str, $params = [])
+    /**
+     * @param array<string, string|int|float> $params
+     */
+    protected function trans(string $str, array $params = []): string
     {
         return Translator::getInstance()->trans($str, $params, WireTransfer::MESSAGE_DOMAIN);
     }
@@ -60,7 +63,7 @@ class ConfigurationForm extends BaseForm
                 [
                     'constraints' => [new NotBlank()],
                     'required' => true,
-                    'label' => Translator::getInstance()->trans('Account holder name', [], WireTransfer::MESSAGE_DOMAIN),
+                    'label' => $this->trans('Account holder name'),
                     'data' => WireTransfer::getConfigValue('name', ''),
                     'label_attr' => [
                         'for' => 'namefield',
@@ -73,7 +76,7 @@ class ConfigurationForm extends BaseForm
                 [
                     'constraints' => [new NotBlank(), new Iban()],
                     'required' => true,
-                    'label' => Translator::getInstance()->trans('IBAN (International Bank Account Number)', [], WireTransfer::MESSAGE_DOMAIN),
+                    'label' => $this->trans('IBAN (International Bank Account Number)'),
                     'data' => WireTransfer::getConfigValue('iban', ''),
                     'label_attr' => [
                         'for' => 'ibanfield',
@@ -86,7 +89,7 @@ class ConfigurationForm extends BaseForm
                 [
                     'constraints' => [new NotBlank(), new BIC()],
                     'required' => true,
-                    'label' => Translator::getInstance()->trans('BIC (Bank Identifier Code)', [], WireTransfer::MESSAGE_DOMAIN),
+                    'label' => $this->trans('BIC (Bank Identifier Code)'),
                     'data' => WireTransfer::getConfigValue('bic', ''),
                     'label_attr' => [
                         'for' => 'bicfield',
@@ -98,7 +101,7 @@ class ConfigurationForm extends BaseForm
                 TextareaType::class,
                 [
                     'required' => false,
-                    'label' => Translator::getInstance()->trans('Message displayed to your customer when order is placed', [], WireTransfer::MESSAGE_DOMAIN),
+                    'label' => $this->trans('Message displayed to your customer when order is placed'),
                     'data' => WireTransfer::getConfigValue('message', ''),
                     'label_attr' => [
                         'for' => 'messagefield',

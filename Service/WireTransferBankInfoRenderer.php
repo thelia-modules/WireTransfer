@@ -19,9 +19,11 @@ use Thelia\Model\OrderQuery;
 use WireTransfer\WireTransfer;
 
 /**
- * Builds the "bank account details" markup shown on the order confirmation page of the Flexy
- * theme, which has no front-office hook to render them into. Kept out of the Twig extension so
- * the extension stays a thin integration layer.
+ * Builds the "bank account details" markup shown on the order confirmation page.
+ *
+ * Kept out of the Twig extension so the extension stays a thin integration layer, and out of a
+ * template because the markup has to be reachable from both a Twig function and a
+ * ThemeHookInterface implementation.
  */
 final readonly class WireTransferBankInfoRenderer
 {

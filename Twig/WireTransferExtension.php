@@ -19,9 +19,12 @@ use Twig\TwigFunction;
 use WireTransfer\Service\WireTransferBankInfoRenderer;
 
 /**
- * Exposes the WireTransfer bank details to the Flexy theme, which has no front-office hook to
- * render them into. Call it on the order confirmation page, e.g.
- * {{ wiretransfer_bank_info(order_id) }}.
+ * Exposes the WireTransfer bank details to the front-office theme. Call it on the order
+ * confirmation page, e.g. {{ wiretransfer_bank_info(order_id) }}.
+ *
+ * NOTE: a theme template must not call this directly — a module Twig function is resolved at
+ * compile time, so the page breaks when the module is disabled. Prefer a theme_hook() point
+ * answered by a ThemeHookInterface implementation.
  */
 final class WireTransferExtension extends AbstractExtension
 {

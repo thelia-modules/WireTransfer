@@ -36,7 +36,6 @@ use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
-use Thelia\Core\Translation\Translator;
 use Thelia\Form\Exception\FormValidationException;
 use Thelia\Tools\URL;
 use WireTransfer\Form\ConfigurationForm;
@@ -49,7 +48,7 @@ use WireTransfer\WireTransfer;
  */
 class ConfigureController extends BaseAdminController
 {
-    public function configure(Request $request, Translator $translator)
+    public function configure(Request $request)
     {
         if (null !== $response = $this->checkAuth(AdminResources::MODULE, 'WireTransfer', AccessManager::UPDATE)) {
             return $response;
@@ -92,7 +91,7 @@ class ConfigureController extends BaseAdminController
 
         // Setup the Form error context, to make error information available in the template.
         $this->setupFormErrorContext(
-            $translator->trans('Wire transfer configuration', [], WireTransfer::MESSAGE_DOMAIN),
+            $this->translator->trans('Wire transfer configuration', [], WireTransfer::MESSAGE_DOMAIN),
             $error_msg,
             $configurationForm,
             $ex
