@@ -135,9 +135,10 @@ using the `order-placed.additional-payment-info` hook.
 Thelia 3 (version 2.3.0+)
 -------------------------
 
-À partir de la 2.3.0, le module est **Thelia 3 uniquement** (branche twig, Symfony 7.4, PHP 8.3, Flexy).
-Le support Thelia 2 a été retiré : pour Thelia 2.5, utilisez la ligne 2.1. As of 2.3.0 the module is
-**Thelia 3 only**; use the 2.1 line for Thelia 2.5.
+À partir de la 2.3.0, le module est **Thelia 3 uniquement** (branche `main`, Symfony 7.4, PHP 8.3,
+Flexy). Le support Thelia 2 a été retiré : pour Thelia 2.5, utilisez la ligne 2.1, maintenue sur la
+branche `thelia2`. As of 2.3.0 the module is **Thelia 3 only**; use the 2.1 line (branch `thelia2`)
+for Thelia 2.5.
 
 ### Rendu des surfaces / Where each surface lives
 
@@ -157,9 +158,10 @@ Le support Thelia 2 a été retiré : pour Thelia 2.5, utilisez la ligne 2.1. As
   Elle ne rend rien si la commande n'a pas été payée par virement. Le markup est construit par
   `WireTransfer\Service\WireTransferBankInfoRenderer`, qui est la **seule barrière
   d'échappement** — le message configuré par le marchand est volontairement rendu brut.
-- **Routes** : déclarées dans `Config/routing.xml` **uniquement**, sans attribut `#[Route]` —
-  Thelia 3 charge les deux mécanismes et enregistrerait la route en double (chemin inchangé
-  `/admin/wiretransfer/configure`).
+- **Routes** : déclarées par attributs `#[Route]` sur le contrôleur. `Config/routing.xml` a été
+  supprimé : Thelia 3 le charge encore mais en émettant une dépréciation, et cumuler les deux
+  mécanismes enregistrait la route en double. Chemin inchangé (`/admin/wiretransfer/configure`),
+  nom de route inchangé (`wiretransfer.configure`).
 - **Traductions** : les libellés front vivent désormais dans le domaine racine du module
   (`wiretransfer`, `I18n/en_US.php` et `I18n/fr_FR.php`) et non plus dans `wiretransfer.fo.default`.
   Ce domaine-là n'existait que parce que Thelia le construit en scannant `templates/frontOffice/*` :

@@ -32,6 +32,7 @@ namespace WireTransfer\Controller;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
+use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Security\AccessManager;
@@ -48,6 +49,7 @@ use WireTransfer\WireTransfer;
  */
 class ConfigureController extends BaseAdminController
 {
+    #[Route('/admin/wiretransfer/configure', name: 'wiretransfer.configure', methods: ['POST'])]
     public function configure(Request $request)
     {
         if (null !== $response = $this->checkAuth(AdminResources::MODULE, 'WireTransfer', AccessManager::UPDATE)) {
