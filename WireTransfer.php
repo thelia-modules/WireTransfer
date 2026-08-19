@@ -26,12 +26,15 @@
 /*      You should have received a copy of the GNU General Public License */
 /*	    along with this program. If not, see <http://www.gnu.org/licenses/>. */
 
+declare(strict_types=1);
+
 namespace WireTransfer;
 
 use Propel\Runtime\Connection\ConnectionInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
+use Symfony\Component\HttpFoundation\Response;
+use Thelia\Core\Install\Database;
 use Thelia\Core\Translation\Translator;
-use Thelia\Install\Database;
 use Thelia\Log\Tlog;
 use Thelia\Model\MessageQuery;
 use Thelia\Model\Order;
@@ -44,9 +47,10 @@ class WireTransfer extends AbstractPaymentModule
 {
     public const MESSAGE_DOMAIN = 'wiretransfer';
 
-    public function pay(Order $order): void
+    public function pay(Order $order): ?Response
     {
-        // Nothing special to do.
+        // Nothing special to do (offline payment).
+        return null;
     }
 
     /**
@@ -74,9 +78,13 @@ class WireTransfer extends AbstractPaymentModule
         return $valid && $this->getCurrentOrderTotalAmount() > 0;
     }
 
-    public function install(ConnectionInterface $con = null): void
+    public function install(?ConnectionInterface $con = null): void
     {
-        $database = new Database($con->getWrappedConnection());
+        // $con is passed straight through: Database's constructor accepts
+        // ConnectionInterface|PDO|null, unwraps a ConnectionWrapper itself and falls back to a
+        // Propel write connection when given null. Calling getWrappedConnection() here would
+        // duplicate that and blow up on the null the signature explicitly allows.
+        $database = new Database($con);
 
         // Insert email message
         $database->insertSql(null, [__DIR__.'/Config/setup.sql']);
@@ -84,12 +92,12 @@ class WireTransfer extends AbstractPaymentModule
         /* insert the images from image folder if not already done */
         $moduleModel = $this->getModuleModel();
 
-        if (!$moduleModel->isModuleImageDeployed($con)) {
+        if (!$moduleModel->isModuleImageDeployed()) {
             $this->deployImageFolder($moduleModel, sprintf('%s/images', __DIR__), $con);
         }
     }
 
-    public function destroy(ConnectionInterface $con = null, $deleteModuleData = false): void
+    public function destroy(?ConnectionInterface $con = null, $deleteModuleData = false): void
     {
         // Delete our message
         if (null !== $message = MessageQuery::create()->findOneByName('order_confirmation_wiretransfer')) {
@@ -111,7 +119,7 @@ class WireTransfer extends AbstractPaymentModule
     public static function configureServices(ServicesConfigurator $servicesConfigurator): void
     {
         $servicesConfigurator->load(self::getModuleCode().'\\', __DIR__)
-            ->exclude([THELIA_MODULE_DIR.ucfirst(self::getModuleCode()).'/I18n/*'])
+            ->exclude([__DIR__.'/I18n/*'])
             ->autowire(true)
             ->autoconfigure(true);
     }

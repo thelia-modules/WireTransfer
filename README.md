@@ -130,3 +130,43 @@ The content of this e-mail could be configured in the back-office ->  Le contenu
 
 The bank account information are displayed in `order-placed.html` file of the default front office template,
 using the `order-placed.additional-payment-info` hook.
+
+
+Thelia 3 (version 2.3.0+)
+-------------------------
+
+À partir de la 2.3.0, le module est **Thelia 3 uniquement** (branche twig, Symfony 7.4, PHP 8.3, Flexy).
+Le support Thelia 2 a été retiré : pour Thelia 2.5, utilisez la ligne 2.1. As of 2.3.0 the module is
+**Thelia 3 only**; use the 2.1 line for Thelia 2.5.
+
+### Rendu des surfaces / Where each surface lives
+
+- **Back-office** : la page de configuration est rendue via le hook
+  `WireTransfer\Hook\Back\ConfigurationHook` (`module.configuration`, déclaré par
+  `getSubscribedHooks()`, donc auto-découvert — `Config/config.xml` n'a plus de section `<hooks>`),
+  template `templates/backOffice/default-twig/WireTransfer/module-configuration.html.twig`.
+- **Front-office** : Thelia 3 a supprimé les hooks Smarty du front **sans remplacement
+  fonctionnel** — `ThemeHookInterface` et le tag `thelia.theme_hook` existent, mais rien ne
+  consomme le tag et aucune fonction Twig `theme_hook()` n'est enregistrée. Les coordonnées
+  bancaires sont donc exposées par une **fonction Twig** :
+
+    ```twig
+    {{ wiretransfer_bank_info(order_id) }}
+    ```
+
+  Elle ne rend rien si la commande n'a pas été payée par virement. Le markup est construit par
+  `WireTransfer\Service\WireTransferBankInfoRenderer`, qui est la **seule barrière
+  d'échappement** — le message configuré par le marchand est volontairement rendu brut.
+- **Routes** : déclarées dans `Config/routing.xml` **uniquement**, sans attribut `#[Route]` —
+  Thelia 3 charge les deux mécanismes et enregistrerait la route en double (chemin inchangé
+  `/admin/wiretransfer/configure`).
+- **Traductions** : les libellés front vivent désormais dans le domaine racine du module
+  (`wiretransfer`, `I18n/en_US.php` et `I18n/fr_FR.php`) et non plus dans `wiretransfer.fo.default`.
+  Ce domaine-là n'existait que parce que Thelia le construit en scannant `templates/frontOffice/*` :
+  supprimer le dossier Smarty aurait désenregistré le catalogue.
+
+### Boucle `wiretransfer.get.info`
+
+Toujours disponible et inchangée : elle retourne `ACCOUNT_HOLDER_NAME`, `IBAN`, `BIC`, `MESSAGE`
+pour un `order_id`. Sous Flexy, préférez la fonction Twig `wiretransfer_bank_info()` ci-dessus, qui
+encapsule cette logique — la boucle n'a plus de consommateur dans le module.

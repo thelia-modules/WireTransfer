@@ -26,14 +26,16 @@
 /*      You should have received a copy of the GNU General Public License */
 /*	    along with this program. If not, see <http://www.gnu.org/licenses/>. */
 
+declare(strict_types=1);
+
 namespace WireTransfer\Controller;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
-use Thelia\Core\Translation\Translator;
 use Thelia\Form\Exception\FormValidationException;
 use Thelia\Tools\URL;
 use WireTransfer\Form\ConfigurationForm;
@@ -46,7 +48,7 @@ use WireTransfer\WireTransfer;
  */
 class ConfigureController extends BaseAdminController
 {
-    public function configure(Request $request, Translator $translator)
+    public function configure(Request $request)
     {
         if (null !== $response = $this->checkAuth(AdminResources::MODULE, 'WireTransfer', AccessManager::UPDATE)) {
             return $response;
@@ -87,18 +89,22 @@ class ConfigureController extends BaseAdminController
             $error_msg = $ex->getMessage();
         }
 
-        // At this point, the form has errors, and should be redisplayed. We don not redirect,
-        // just redisplay the same template.
         // Setup the Form error context, to make error information available in the template.
         $this->setupFormErrorContext(
-            $translator->trans('Wire transfer configuration', [], WireTransfer::MESSAGE_DOMAIN),
+            $this->translator->trans('Wire transfer configuration', [], WireTransfer::MESSAGE_DOMAIN),
             $error_msg,
             $configurationForm,
             $ex
         );
 
-        // Do not redirect at this point, or the error context will be lost.
-        // Just redisplay the current template.
-        return $this->render('module-configure', ['module_code' => 'WireTransfer']);
+        // The configuration screen is rendered through a hook, so redirect back to the module
+        // configuration page. That redirect drops the ParserContext form error, hence the flash
+        // bag (rendered by the default-twig base template as app.flashes).
+        $session = $request->getSession();
+        if ($session instanceof FlashBagAwareSessionInterface) {
+            $session->getFlashBag()->add('danger', $error_msg);
+        }
+
+        return new RedirectResponse(URL::getInstance()->absoluteUrl('/admin/module/WireTransfer'));
     }
 }

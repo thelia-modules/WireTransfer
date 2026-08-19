@@ -12,19 +12,20 @@
         <form name="transfer.configure.bic" class="WireTransfer\Form\ConfigurationForm" />
     </forms>
 
-    <hooks>
-        <hook id="wiretransfer.hook" class="WireTransfer\Hook\HookManager" scope="request">
-            <tag name="hook.event_listener" event="module.configuration" type="back" templates="render:module_configuration.html" />
-            <tag name="hook.event_listener" event="order-placed.additional-payment-info" type="front" method="onAdditionalPaymentInfo" />
-        </hook>
-    </hooks>
+    <!--
+        No <hooks> section: WireTransfer\Hook\Back\ConfigurationHook declares itself through
+        getSubscribedHooks(), which Thelia 3 auto-discovers. The front-office needs no hook —
+        Flexy has none, so the theme renders the bank details with the wiretransfer_bank_info()
+        Twig function.
+    -->
 
-    <services>
-        <service id="send.wiretransfer.mail" class="WireTransfer\Listener\SendPaymentConfirmationEmail" scope="request">
-            <argument type="service" id="thelia.parser" />
-            <argument type="service" id="mailer"/>
-            <tag name="kernel.event_subscriber"/>
-        </service>
-    </services>
+    <!--
+        No <services> section either. SendPaymentConfirmationEmail used to be declared here as
+        `send.wiretransfer.mail` ON TOP of being auto-discovered by configureServices(), which
+        registered the SAME class as an event subscriber TWICE (two distinct service ids, so
+        Symfony wires two listeners) — the customer received the confirmation email twice on
+        every switch to paid. Auto-discovery alone is authoritative: do not re-declare a class
+        that lives under the module namespace.
+    -->
 
 </config>

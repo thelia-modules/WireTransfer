@@ -1,0 +1,39 @@
+{# WireTransfer configuration screen, rendered into the module.configuration back-office hook. #}
+{% set d = 'wiretransfer.ai' %}
+{% set f = config_form %}
+
+<form action="{{ path('wiretransfer.configure') }}" method="post" class="wiretransfer-configuration">
+    <input type="hidden" name="{{ attribute(f, '_token').vars.full_name }}" value="{{ attribute(f, '_token').vars.value }}">
+    <input type="hidden" name="{{ f.success_url.vars.full_name }}" value="{{ app.request.requestUri }}">
+    <input type="hidden" name="{{ f.error_url.vars.full_name }}" value="{{ app.request.requestUri }}">
+
+    <div class="card mb-4">
+        <div class="card-header d-flex align-items-center gap-2">
+            <i class="bi bi-bank text-muted"></i> {{ 'Bank account configuration'|trans({}, d) }}
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label" for="wiretransfer_name">{{ f.name.vars.label }} <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="wiretransfer_name" required name="{{ f.name.vars.full_name }}" value="{{ f.name.vars.value }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="wiretransfer_iban">{{ f.iban.vars.label }} <span class="text-danger">*</span></label>
+                <input type="text" class="form-control font-monospace" id="wiretransfer_iban" required name="{{ f.iban.vars.full_name }}" value="{{ f.iban.vars.value }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="wiretransfer_bic">{{ f.bic.vars.label }} <span class="text-danger">*</span></label>
+                <input type="text" class="form-control font-monospace" id="wiretransfer_bic" required name="{{ f.bic.vars.full_name }}" value="{{ f.bic.vars.value }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="wiretransfer_message">{{ f.message.vars.label }}</label>
+                <textarea class="form-control" id="wiretransfer_message" rows="4" name="{{ f.message.vars.full_name }}">{{ f.message.vars.value }}</textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary px-4">
+            <i class="bi bi-check-lg"></i> {{ 'Save changes'|trans({}, d) }}
+        </button>
+    </div>
+</form>
