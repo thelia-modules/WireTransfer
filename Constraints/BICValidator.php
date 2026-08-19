@@ -36,15 +36,7 @@ use Thelia\Core\Translation\Translator;
  * @author Thelia <info@thelia.net>
  */
 class BICValidator extends ConstraintValidator {
-    /**
-     * Checks if the passed value is valid.
-     *
-     * @param mixed $value The value that should be validated
-     * @param Constraint $constraint The constraint for the validation
-     *
-     * @api
-     */
-    public function validate($value, Constraint $constraint)
+    public function validate(mixed $value, Constraint $constraint): void
     {
         if (!$constraint instanceof BIC) {
             throw new UnexpectedTypeException($constraint, BIC::class);
