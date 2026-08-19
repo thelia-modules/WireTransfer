@@ -4,13 +4,20 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
 
+    <!--
+        The <loops> section is NOT redundant with auto-discovery: Thelia 3 auto-registers the loop
+        under the name derived from its class (get_bank_information), so this declaration is what
+        keeps the documented template name `wiretransfer.get.info` working for Smarty themes.
+    -->
     <loops>
         <loop class="WireTransfer\Loop\GetBankInformation" name="wiretransfer.get.info" />
     </loops>
 
-    <forms>
-        <form name="transfer.configure.bic" class="WireTransfer\Form\ConfigurationForm" />
-    </forms>
+    <!--
+        No <forms> section: WireTransfer\Form\ConfigurationForm is auto-discovered and registered
+        under ConfigurationForm::getName() ("configurewiretransfer"), which is the name the hook
+        and the controller use. The former "transfer.configure.bic" alias had no consumer left.
+    -->
 
     <!--
         No <hooks> section: WireTransfer\Hook\Back\ConfigurationHook declares itself through
