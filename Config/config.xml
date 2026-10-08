@@ -21,9 +21,9 @@
 
     <!--
         No <hooks> section: WireTransfer\Hook\Back\ConfigurationHook declares itself through
-        getSubscribedHooks(), which Thelia 3 auto-discovers. The front-office needs no hook —
-        Flexy has none, so the theme renders the bank details with the wiretransfer_bank_info()
-        Twig function.
+        getSubscribedHooks(), which Thelia 3 auto-discovers. The front-office bank details are
+        served by WireTransfer\Hook\Theme\BankDetailsThemeHook (ThemeHookInterface, auto-discovered
+        too) on Flexy's order-placed.bottom point.
     -->
 
     <!--

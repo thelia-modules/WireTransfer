@@ -23,8 +23,8 @@ use WireTransfer\Service\WireTransferBankInfoRenderer;
  * confirmation page, e.g. {{ wiretransfer_bank_info(order_id) }}.
  *
  * NOTE: a theme template must not call this directly — a module Twig function is resolved at
- * compile time, so the page breaks when the module is disabled. Thelia 3 offers no usable front
- * hook either (ThemeHookInterface is not wired), so the theme should fetch a module route.
+ * compile time, so the page breaks when the module is disabled. Flexy gets the bank details from
+ * WireTransfer\Hook\Theme\BankDetailsThemeHook, on its order-placed.bottom theme point.
  */
 final class WireTransferExtension extends AbstractExtension
 {
