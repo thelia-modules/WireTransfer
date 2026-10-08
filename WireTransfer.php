@@ -67,8 +67,10 @@ class WireTransfer extends AbstractPaymentModule
             self::getConfigValue('iban', '') !== ''
         ;
 
+        // Info, not error: an unconfigured module is a normal state right after install (the
+        // module is active by default), and the payment list is read on every checkout page.
         if (!$valid) {
-            Tlog::getInstance()->addError(
+            Tlog::getInstance()->addInfo(
                 Translator::getInstance()->trans(
                     'Bank information parameters have not been defined.', [], self::MESSAGE_DOMAIN
                 )
@@ -94,6 +96,18 @@ class WireTransfer extends AbstractPaymentModule
 
         if (!$moduleModel->isModuleImageDeployed()) {
             $this->deployImageFolder($moduleModel, sprintf('%s/images', __DIR__), $con);
+        }
+    }
+
+    /**
+     * The distribution installer registers the shipped modules straight into the module table,
+     * so install() never runs for them and the confirmation email had no message to load. The
+     * activation is what every install path goes through: seed the message there when missing.
+     */
+    public function postActivation(?ConnectionInterface $con = null): void
+    {
+        if (null === MessageQuery::create()->findOneByName('order_confirmation_wiretransfer')) {
+            (new Database($con))->insertSql(null, [__DIR__.'/Config/setup.sql']);
         }
     }
 
