@@ -69,8 +69,10 @@ class ConfigureController extends BaseAdminController
             // Get the form field values
             $data = $form->getData();
 
-            foreach ($data as $name => $value) {
-                WireTransfer::setConfigValue($name, $value);
+            // Only the bank fields: the form also carries success_url, error_url and
+            // error_message, which are not settings and must not land in module_config.
+            foreach (['name', 'iban', 'bic', 'message'] as $name) {
+                WireTransfer::setConfigValue($name, (string) ($data[$name] ?? ''));
             }
 
             // Log configuration modification
